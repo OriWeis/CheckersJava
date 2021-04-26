@@ -9,11 +9,16 @@ public class ret_opt {
 		this.new_mat=m1;
 		this.value=val;
 	}
-
+	
 	public double getValue() {
 		return value;
 	}
 
+	public void set_Evaluation()
+	{
+		 this.value=this.new_mat.eval_Func();
+	}
+	
 	public void setValue(double value)
 	{
 		this.value = value;

@@ -20,15 +20,7 @@ public class AI_Algorithm
 	 * This Constructor Should get 
 	 */
 	public AI_Algorithm(matrix m,int depth,Checkers c)
-	{
-		
-		/**System.out.println("length of this is : ->"+this.get_all_moves(m, "red", c).size()+"\n");
-		for (matrix mat: this.get_all_moves(m, "red", c))
-		{
-			mat.print_mat();
-			System.out.println("\n\n");
-		}**/
-		
+	{	
 		matrix mat12= new matrix();
 		ret_opt ret12=new ret_opt(mat12,0);
 		matrix m1=new matrix(m);
@@ -51,6 +43,7 @@ public class AI_Algorithm
 		
 		if (depth ==0 ||m1.gameOver()==true)
 		{
+			r1.set_Evaluation();
 			return r1;
 		}
 		
