@@ -26,7 +26,7 @@ public class Menu extends JPanel{
     private JButton onev1,aib;
     private Image img, btn1Image,btn2Image;
     public boolean ispvp = false, ispvAi = false;
-    //public Rummikub gamePanel;
+
     JPanel panel;
     JFrame fr;
 

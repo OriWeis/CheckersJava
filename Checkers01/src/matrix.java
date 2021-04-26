@@ -54,6 +54,8 @@ public class matrix
 	
 	private ArrayList<move_opt> moving_opt;//Move Options for Cell//
 	
+	private ArrayList<move_opt> skipped;//skipped for eating twice
+	
 	private int row_Twice, col_Twice;
 	
 	private boolean chose_to_eat;
@@ -64,7 +66,9 @@ public class matrix
 	private int chosen_row,chosen_col;
 	
 	private boolean already_Ate;
+	private int counter_eat;
 /**
+ * 
  * Function To Initialize matrix Object
  *  
  *  
@@ -168,8 +172,10 @@ public class matrix
 		this.mat=new int[DEFAULT_LEN][DEFAULT_LEN];
 		//this.whites=new ArrayList<Cell>();
 		//this.black_s=new ArrayList<Cell>();
-		this.moving_opt=new ArrayList<move_opt>(4);//Length Starts From 0 When there is Nothing inside. 
+		this.moving_opt=new ArrayList<move_opt>();//Length Starts From 0 When there is Nothing inside. 
+		this.skipped=new ArrayList<move_opt>();
 		//System.out.println("\nThe Length Of Arraylist is ->"+this.moving_opt.size());
+		this.counter_eat=0;
 		this.already_Ate=false;
 		init_mat();
 		
@@ -189,6 +195,7 @@ public class matrix
 			}
 		}
 	}
+	
 	public matrix(matrix mat1,Cell curr, int row,int col)
 	{
 		this((mat1));
@@ -278,11 +285,9 @@ public class matrix
 	
 	public void eat_left_up(int i, int j)
 	{
-		
 		this.delete_from_Mat(i-1, j-1,mat[i-1][j-1]);
 		this.mat[i-2][j-2]=this.mat[i][j];
 		this.mat[i][j]=EMPTY;
-		
 		this.row_Twice=i-2;
 		this.col_Twice=j-2;
 	}
@@ -291,30 +296,28 @@ public class matrix
 	{
 		
 		this.delete_from_Mat(i-1, j+1,mat[i-1][j+1]);
+		System.out.println("i-2 is : "+(i-2)+" j+2 is : "+(j+2));
 		this.mat[i-2][j+2]=this.mat[i][j];
 		this.mat[i][j]=0;
-		
 		this.row_Twice=i-2;
 		this.col_Twice=j+2;
 	}
 	
 	public void eat_right_down(int i, int j)
 	{
+		
 		this.delete_from_Mat(i+1, j+1,mat[i+1][j+1]);
 		this.mat[i+2][j+2]=this.mat[i][j];
 		this.mat[i][j]=0;
-		
 		this.row_Twice=i+2;
 		this.col_Twice=j+2;
 	}
 	
 	public void eat_left_down(int i, int j)
 	{
-		
 		this.delete_from_Mat(i+1, j-1,mat[i+1][j-1]);
 		this.mat[i+2][j-2]=this.mat[i][j];
 		this.mat[i][j]=0;
-		
 		this.row_Twice=i+2;
 		this.col_Twice=j-2;
 		
@@ -349,6 +352,134 @@ public class matrix
 	
 	/**
 	 * 
+	 * Second_Eat_Check_Function
+	 * @param i
+	 * @param j
+	 * @param type
+	 * @param prev_row
+	 * @param prev_col
+	 * @return
+	 */
+	public boolean second_check(int i,int j,int type,String m_type,int prev_row,int prev_col)
+	{
+		move_opt e1;
+		boolean b1=false;
+		//int r_check,l_check;
+		if (type==this.whc)
+		if(i<=1)
+			b1= false;
+		else 
+		{
+			if(j<6)//Checks where to eat//
+				if(return_type(i-1,j+1)!=type && return_type(i-1,j+1)!=type+2 && return_type(i-1,j+1)!=EMPTY)
+					if(return_type(i-2,j+2)==EMPTY)
+					{
+						
+							System.out.println("adding to moving_opt this is what will be displayed"+"("+(i-2)+","+(j+2)+")");
+							e1=new move_opt(i-2, j+2,m_type,"eat_right_up",prev_row,prev_col);
+							this.moving_opt.add(e1);
+							//eat_right_up(i,j);
+							b1=true;
+					}
+			if(j>1)
+				if(return_type(i-1,j-1)!=type&& return_type(i-1,j-1)!=type+2 && return_type(i-1,j-1)!=EMPTY)
+					if(return_type(i-2,j-2)==EMPTY)
+					{
+						
+						System.out.println("adding to moving_opt"+"("+(i-2)+","+(j-2)+")");
+						e1=new move_opt(i-2, j-2,m_type,"eat_left_up",prev_row,prev_col);
+						this.moving_opt.add(e1);
+						//eat_left_up(i,j);
+						b1=true;
+					}
+		}
+		else
+		if(type==this.blc)
+			if(i>=this.DEFAULT_LEN-2)
+				b1= false;
+			else 
+			{
+				if(j<6)//Checks where to eat//
+					if(return_type(i+1,j+1)!=type && return_type(i+1,j+1)!=type+2 && return_type(i+1,j+1)!=EMPTY)
+						if(return_type(i+2,j+2)==EMPTY)
+						{
+							
+							System.out.println("adding to moving_opt"+"("+(i+2)+","+(j+2)+")");
+							e1=new move_opt(i+2, j+2,m_type,"eat_right_down",prev_row,prev_col);
+							this.moving_opt.add(e1);
+							//eat_right_down(i,j);
+							b1=true;
+						}
+				if(j>1)
+					if(return_type(i+1,j-1)!=type&&return_type(i+1,j-1)!=type+2 && return_type(i+1,j-1)!=EMPTY)
+						if(return_type(i+2,j-2)==EMPTY)
+						{
+							System.out.println("adding to moving_opt"+"("+(i+2)+","+(j-2)+")");
+							e1=new move_opt(i+2, j-2,m_type,"eat_left_down",prev_row,prev_col);
+							this.moving_opt.add(e1);
+							//eat_left_down(i,j);
+							b1=true;
+						}
+			}
+		else
+		if(this.is_King(i, j))
+		{
+			System.out.println("\n\nEntered to KINGGGGGGGGGGG\n\n");
+			
+			if(i>1)
+			{
+				if(j<6)//Checks where to eat//
+					if(return_type(i-1,j+1)!=type && return_type(i-1,j+1)!=type-2 && return_type(i-1,j+1)!=EMPTY)
+						if(return_type(i-2,j+2)==EMPTY)
+						{
+									e1=new move_opt(i-2, j+2,m_type,"eat_right_up",prev_row,prev_col);
+									this.moving_opt.add(e1);
+									//eat_right_up(i,j);
+									b1=true;
+						}
+				if(j>1)
+					if(return_type(i-1,j-1)!=type&& return_type(i-1,j-1)!=type-2 && return_type(i-1,j-1)!=EMPTY)
+						if(return_type(i-2,j-2)==EMPTY)
+						{
+							e1=new move_opt(i-2, j-2,m_type,"eat_left_up",prev_row,prev_col);
+							this.moving_opt.add(e1);
+							//eat_left_up(i,j);
+							b1=true;
+						}
+			}
+			
+			if(i<this.DEFAULT_LEN-2)
+			{
+			System.out.println("Entered to i<Default_SIZZEEEEEEEE");
+			if(j<6)//Checks where to eat//
+				if(return_type(i+1,j+1)!=type && return_type(i+1,j+1)!=type-2 && return_type(i+1,j+1)!=EMPTY )
+					if(return_type(i+2,j+2)==EMPTY)
+					{
+						
+						e1=new move_opt(i+2, j+2,m_type,"eat_right_down",prev_row,prev_col);
+						this.moving_opt.add(e1);
+						//eat_right_down(i,j);						
+						b1=true;
+						
+					}
+			if(j>1)
+				if(return_type(i+1,j-1)!=type&&return_type(i+1,j-1)!=type-2 && return_type(i+1,j-1)!=EMPTY)
+					if(return_type(i+2,j-2)==EMPTY)
+					{
+						System.out.println("Should eat...");
+						e1=new move_opt(i+2, j-2,m_type,"eat_left_down",prev_row,prev_col);
+						this.moving_opt.add(e1);
+						//eat_left_down(i,j);
+						b1=true;
+					}
+		}		
+		}
+		return b1;
+	}
+	
+	/**
+	 * 
+	 * Function that checks all the eating options (also double eats)
 	 * @param i means row
 	 * @param j means colloumn
 	 * @param type
@@ -368,21 +499,31 @@ public class matrix
 				if(return_type(i-1,j+1)!=type && return_type(i-1,j+1)!=type+2 && return_type(i-1,j+1)!=EMPTY)
 					if(return_type(i-2,j+2)==EMPTY)
 					{
-						e1=new move_opt(i-2, j+2,"eat_right_up");
-						this.moving_opt.add(e1);
-						//eat_right_up(i,j);
-						b1=true;
+							if(second_check(i-2,j+2,this.mat[i][j],"eat_right_up",i-2,j+2)==false)//the mat[i-1][j+1] should be deleted 
+							{
+								e1=new move_opt(i-2, j+2,"eat_right_up");
+								this.moving_opt.add(e1);
+								//eat_right_up(i,j);
+								
+							}
+							
+							b1=true;
+						
 					}
 			if(j>1)
 				if(return_type(i-1,j-1)!=type&& return_type(i-1,j-1)!=type+2 && return_type(i-1,j-1)!=EMPTY)
 					if(return_type(i-2,j-2)==EMPTY)
 					{
-						e1=new move_opt(i-2, j-2,"eat_left_up");
-						this.moving_opt.add(e1);
+						if(second_check(i-2,j-2,this.mat[i][j],"eat_left_up",i-2,j-2)==false)
+						{
+							e1=new move_opt(i-2, j-2,"eat_left_up");
+							this.moving_opt.add(e1);
+						}
 						//eat_left_up(i,j);
-						b1=true;
+						b1=true;	
 					}
 		}
+		
 		else
 		if(type==this.blc)
 			if(i>=this.DEFAULT_LEN-2)
@@ -393,9 +534,13 @@ public class matrix
 					if(return_type(i+1,j+1)!=type && return_type(i+1,j+1)!=type+2 && return_type(i+1,j+1)!=EMPTY)
 						if(return_type(i+2,j+2)==EMPTY)
 						{
-							e1=new move_opt(i+2, j+2,"eat_right_down");
-							System.out.println("found a way to eat right down \n\n\n\n");
-							this.moving_opt.add(e1);
+							
+							if(second_check(i+2,j+2,this.mat[i][j],"eat_right_down",i+2,j+2)==false)
+							{
+								e1=new move_opt(i+2, j+2,"eat_right_down");
+								System.out.println("found a way to eat right down \n\n\n\n");
+								this.moving_opt.add(e1);
+							}
 							//eat_right_down(i,j);
 							b1=true;
 						}
@@ -403,9 +548,12 @@ public class matrix
 					if(return_type(i+1,j-1)!=type&&return_type(i+1,j-1)!=type+2 && return_type(i+1,j-1)!=EMPTY)
 						if(return_type(i+2,j-2)==EMPTY)
 						{
-							e1=new move_opt(i+2, j-2,"eat_left_down");
-							this.moving_opt.add(e1);
-							//eat_left_down(i,j);
+							if(second_check(i+2,j-2,this.mat[i][j],"eat_left_down",i+2,j-2)==false)
+							{
+									e1=new move_opt(i+2, j-2,"eat_left_down");
+									this.moving_opt.add(e1);
+									//eat_left_down(i,j);
+							}
 							b1=true;
 						}
 			}
@@ -420,18 +568,24 @@ public class matrix
 					if(return_type(i-1,j+1)!=type && return_type(i-1,j+1)!=type-2 && return_type(i-1,j+1)!=EMPTY)
 						if(return_type(i-2,j+2)==EMPTY)
 						{
-							e1=new move_opt(i-2, j+2,"eat_right_up");
-							this.moving_opt.add(e1);
-							//eat_right_up(i,j);
+							if(second_check(i-2,j+2,this.mat[i][j],"eat_right_up",i-2,j+2)==false)
+							{
+									e1=new move_opt(i-2, j+2,"eat_right_up");
+									this.moving_opt.add(e1);
+									//eat_right_up(i,j);
+							}
 							b1=true;
 						}
 				if(j>1)
 					if(return_type(i-1,j-1)!=type&& return_type(i-1,j-1)!=type-2 && return_type(i-1,j-1)!=EMPTY)
 						if(return_type(i-2,j-2)==EMPTY)
 						{
+							if(second_check(i-2,j-2,this.mat[i][j],"eat_left_up",i-2,j-2)==false)
+							{
 							e1=new move_opt(i-2, j-2,"eat_left_up");
 							this.moving_opt.add(e1);
 							//eat_left_up(i,j);
+							}
 							b1=true;
 						}
 			}
@@ -443,18 +597,26 @@ public class matrix
 				if(return_type(i+1,j+1)!=type && return_type(i+1,j+1)!=type-2 && return_type(i+1,j+1)!=EMPTY )
 					if(return_type(i+2,j+2)==EMPTY)
 					{
-						e1=new move_opt(i+2, j+2,"eat_right_down");
-						this.moving_opt.add(e1);
-						//eat_right_down(i,j);
-						b1=true;
+						
+						if(second_check(i+2,j+2,this.mat[i][j],"eat_right_down",i+2,j+2)==false)
+						{
+							e1=new move_opt(i+2, j+2,"eat_right_down");
+							this.moving_opt.add(e1);
+							//eat_right_down(i,j);						
+							b1=true;
+						}
+						
 					}
 			if(j>1)
 				if(return_type(i+1,j-1)!=type&&return_type(i+1,j-1)!=type-2 && return_type(i+1,j-1)!=EMPTY)
 					if(return_type(i+2,j-2)==EMPTY)
 					{
+						if(second_check(i+2,j-2,this.mat[i][j],"eat_left_down",i+2,j-2)==false)
+						{
 						System.out.println("Should eat...");
 						e1=new move_opt(i+2, j-2,"eat_left_down");
 						this.moving_opt.add(e1);
+						}
 						//eat_left_down(i,j);
 						b1=true;
 					}
@@ -564,6 +726,14 @@ public class matrix
 		return b1;
 	}
 	
+	public void send_to_which_move(int storedrow, int storedcol,String m_type,String sec_type,int sec_row_f,int sec_col_f)
+	{
+		
+		which_move(storedrow, storedcol,m_type);
+		which_move(sec_row_f,sec_col_f,sec_type);
+		
+	}
+	
 	//This Function shows which eat function 
 	public void which_move(int storedrow, int storedcol,String m_type)
 	{
@@ -575,6 +745,7 @@ public class matrix
 			eat_left_up(storedrow, storedcol);
 		if(m_type.equals("eat_left_down"))
 			eat_left_down(storedrow, storedcol);
+		
 	}
 	
 	public void make_King(int row,int col)
@@ -606,18 +777,6 @@ public class matrix
 		
 	}
 	
-	public boolean eat_Twice()
-	{
-		int t1;
-		if(this.row_Twice!=-1&& this.col_Twice!=-1)
-		{
-			t1=this.mat[this.row_Twice][this.col_Twice];  	//for type1
-			if(can_eat(this.row_Twice,this.col_Twice,t1))
-				return true;
-		}
-		return false;
-		
-	}
 	
 	public void set_Movement(ArrayList<move_opt> moving)
 	{
@@ -640,7 +799,11 @@ public class matrix
 				else
 				{
 					this.chose_to_eat=true;
-					which_move(storedRow,storedCol,m1.ret_Type());//calling eat function		
+					this.send_to_which_move(storedRow,storedCol,m1.ret_Type(),m1.get_Sec_m_type(),m1.getSec_row_from(),m1.getSec_col_from());//calling eat function
+					/**if(this.can_eat_Twice(row, col))
+					{
+						this.clear_Mv(row,col);
+					}**/					
 				}
 				
 		}
@@ -683,9 +846,8 @@ public class matrix
 	 */
 	public double eval_Func()
 	{
-		//
 		this.update_Cells();//updates the number of regular Cells and kings. 
-		return this.red_left-this.white_left;
+		return this.red_left-this.white_left+(this.red_kings-this.white_kings);
 	}
 	
 	public void print_Movings(ArrayList<move_opt> moving)
@@ -700,7 +862,7 @@ public class matrix
 	
 	public ArrayList<Cell> get_Cells_Arr_by_Color(String Color)
 	{
-		System.out.println("Entered to get_Cells_Arr_by_Color");
+		//System.out.println("Entered to get_Cells_Arr_by_Color");
 		ArrayList<Cell> arr_Cells=new ArrayList<Cell>();
 		
 		for (int i=0; i<this.DEFAULT_LEN;i++)
@@ -713,7 +875,7 @@ public class matrix
 						ArrayList<move_opt> moving_options=this.where_To_Go(i, j);
 						//System.out.println("Adding Cell To Arr");
 						Cell c1=new Cell(i,j,moving_options);
-						this.print_Movings(c1.get_valid_moves());
+						//this.print_Movings(c1.get_valid_moves());
 						System.out.println("");
 						arr_Cells.add(c1);
 					}
@@ -724,7 +886,7 @@ public class matrix
 								ArrayList<move_opt> moving_options=this.where_To_Go(i, j);
 								//System.out.println("Adding Cell To Arr");
 								Cell c1=new Cell(i,j,moving_options);
-								this.print_Movings(c1.get_valid_moves());
+								//this.print_Movings(c1.get_valid_moves());
 								System.out.println("");
 								arr_Cells.add(c1);
 							}
@@ -743,6 +905,10 @@ public class matrix
 		this.red_kings=0;
 		
 	}
+	
+	//Need To Check 2 things
+	//no movement of players
+	//4v4 thing
 	public boolean gameOver()
 	{ 
 		//Wrapper for gameOverInternal

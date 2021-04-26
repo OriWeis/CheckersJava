@@ -99,6 +99,7 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 		//height=height+100;
 		frame.setSize(width, height);
 		frame.setIconImage(crownImage);
+		frame.setTitle("Checkers Game By Ori Weis");
 		frame.setBackground(Color.cyan);
 		frame.setLocationRelativeTo(null);
 		frame.pack();
@@ -139,7 +140,7 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 			super.paintComponent(g);
 			if(this.gameData.gameOver()==false)
 			{
-				this.gameData.print_mat();
+				//this.gameData.print_mat();
 			for(int row = 0; row < DEFAULT_S; row++)
 			{
 				for(int col = 0; col < DEFAULT_S; col++)
@@ -291,7 +292,7 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 			matrix sendmat =new matrix();
 			sendmat.set_matrix(board);
 			
-			AI_Algorithm player_AI=new AI_Algorithm(sendmat,8,this);
+			AI_Algorithm player_AI=new AI_Algorithm(sendmat,6,this);
 			sendmat=player_AI.return_new_board();
 			board.set_matrix(sendmat);
 			repaint();
@@ -302,7 +303,7 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 			{
 				System.out.println("\n\n\nPrinting Mat From Checkers !!!! \n");
 				this.gameData.print_mat();
-			}
+			}	
 			this.switch_sides();
 		}
 		
@@ -329,15 +330,6 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 				this.storedCol = col;
 				this.storedRow = row; // Sets the current click to instance variables to be used elsewhere
 				this.gameData.where_To_Go(this.storedRow,this.storedCol);
-				
-				if(this.gameData.eat_Twice()==true)
-			    {
-			        	
-		        	System.out.println("\n\n\nClearing MV movement opt");
-					this.gameData.clear_Mv(row, col);
-					
-		        }
-				
 				this.inPlay=true;
 				repaint();
 			}
@@ -348,14 +340,8 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 				{
 					System.out.println("A move has Happened");
 					this.gameData.make_Move(row,col,this.storedRow,this.storedCol,this.gameData.getMovement());
+					repaint();
 					//thing=this.gameData.get_mat_i_j(this.storedRow,this.storedCol);
-					if(this.gameData.eat_Twice()==false)
-					{
-						this.gameData.init_twice();
-						this.switch_sides();
-						//repaint();
-						this.inPlay=false;
-					}
 					this.gameData.update_Kings();
 					resetPlay();
 					this.ai_playing=true;
@@ -368,8 +354,10 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 	        
 	        if(this.ai_playing==true)
 	        {
+	        	System.out.println("------------------------------------------Endedd------------------------------------------------------------");
 	        	repaint();
 	        	this.ai_move(this.gameData);
+	        	
 	        }
 	        
 		  }

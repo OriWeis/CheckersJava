@@ -29,8 +29,10 @@ public class AI_Algorithm
 			System.out.println("\n\n");
 		}**/
 		
+		matrix mat12= new matrix();
+		ret_opt ret12=new ret_opt(mat12,0);
 		matrix m1=new matrix(m);
-		ret_opt ret1=AlphaBeta(m,depth,true,Double.MIN_VALUE,Double.MAX_VALUE,c);
+		ret_opt ret1=AlphaBeta(m,depth,true,Double.MIN_VALUE,Double.MAX_VALUE,c,ret12);
 		this.mat_to_ret=ret1.getNew_mat();
 		
 		System.out.println("Printing Final Matrix");
@@ -43,18 +45,16 @@ public class AI_Algorithm
 	 * max_player is a boolean value that tells us if we want to minimize the value or maximize it
 	 * 
 	 **/
-	public ret_opt AlphaBeta(matrix m1, int depth,boolean max_player,double alpha,double beta,Checkers c1)
+	public ret_opt AlphaBeta(matrix m1, int depth,boolean max_player,double alpha,double beta,Checkers c1,ret_opt r1)
 	{
 		double maxEval,minEval,evaluation;
-		matrix mat12= new matrix();
-		ret_opt ret1=new ret_opt(mat12,0);
 		
 		if (depth ==0 ||m1.gameOver()==true)
 		{
-			return ret1;
+			return r1;
 		}
 		
-		System.out.println("Running Minimax Algo");
+		//System.out.println("Running Minimax Algo");
 		
 		if (max_player==true)
 		{
@@ -65,8 +65,8 @@ public class AI_Algorithm
 			{
 				//System.out.println("Entered To For loop of moves");
 				//mat.print_mat();
-				System.out.println("\ndepth is ->"+depth+"\n");
-				evaluation=AlphaBeta(mat,depth -1,false,alpha,beta,c1).getValue();
+				//System.out.println("\ndepth is ->"+depth+"\n");
+				evaluation=AlphaBeta(mat,depth -1,false,alpha,beta,c1,r1).getValue();
 				maxEval=Math.max(maxEval, evaluation);
 				if(evaluation==maxEval)
 					best_move.set_matrix(mat);
@@ -79,9 +79,9 @@ public class AI_Algorithm
 				
 			}
 			//System.out.println("depth is "+depth);
-			ret1=new ret_opt(best_move,maxEval);
-			System.out.println("MaxEval is -> "+maxEval);
-			return ret1;
+			r1=new ret_opt(best_move,maxEval);
+			//System.out.println("MaxEval is -> "+maxEval);
+			return r1;
 		}
 		
 		else
@@ -92,8 +92,8 @@ public class AI_Algorithm
 			for (matrix mat :moves)
 			{
 				//mat.print_mat();
-				System.out.println("\ndepth is ->"+depth);
-				evaluation=AlphaBeta(mat,depth -1,true,alpha,beta,c1).getValue();
+				//System.out.println("\ndepth is ->"+depth);
+				evaluation=AlphaBeta(mat,depth -1,true,alpha,beta,c1,r1).getValue();
 				minEval=Math.min(minEval, evaluation);
 				if(minEval==evaluation)
 					best_move.set_matrix(mat);
@@ -105,9 +105,9 @@ public class AI_Algorithm
 						break;
 			}
 			//System.out.println("depth is "+depth);
-			ret1=new ret_opt(best_move,minEval);
-			System.out.println("MinEval is -> "+minEval);
-			return ret1;
+			r1=new ret_opt(best_move,minEval);
+			//System.out.println("MinEval is -> "+minEval);
+			return r1;
 		}
 				
 	}
@@ -123,7 +123,7 @@ public class AI_Algorithm
 	**/
 	public matrix simulate_move(matrix m1,Cell c1,int move_row,int move_col)
 	{
-		System.out.println("simulating a move");
+		//System.out.println("simulating a move");
 		m1.make_Move(move_row, move_col, c1.Get_row(), c1.Get_col(),c1.get_valid_moves());
 		return m1;
 	}
@@ -154,7 +154,7 @@ public class AI_Algorithm
 			//System.out.println(arr.get(i).get_valid_moves().size());
 			for (int j=0; j<moving_options.size();j++)
 			{
-				System.out.println("\nentered to all valid moves of "+Color+"\n");
+				//System.out.println("\nentered to all valid moves of "+Color+"\n");
 				Cell cell1=new Cell(arr.get(i));
 				matrix temp_board=new matrix();
 				temp_board.set_matrix(m1);
