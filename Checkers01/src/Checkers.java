@@ -33,7 +33,7 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 	
 	//Data Of The Game
 	private matrix gameData;
-	
+	private boolean no_more_steps=false;
 	private boolean ai_playing; //AI plays the Red Cells
 	/**
 	 * Values For gameData 
@@ -54,7 +54,7 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 		window(this.height,this.width,this);
 		Random rand=new Random();
 		this.playing_now=rand.nextInt(2);//*Gives Values Between 0-1*. 0 for White, 1 for Red.
-		this.playing_now=1;//delete after AI works
+		//this.playing_now=1;//delete after AI works
 		this.printStart();
 		this.gameData=new matrix();
 		repaint();
@@ -138,7 +138,7 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 			this.red_left=0;
 			int index1=0;
 			super.paintComponent(g);
-			if(this.gameData.gameOver()==false)
+			if(this.gameData.gameOver()==false && this.no_more_steps==false)
 			{
 				//this.gameData.print_mat();
 			for(int row = 0; row < DEFAULT_S; row++)
@@ -292,9 +292,11 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 			matrix sendmat =new matrix();
 			sendmat.set_matrix(board);
 			
-			AI_Algorithm player_AI=new AI_Algorithm(sendmat,6,this);
+			AI_Algorithm player_AI=new AI_Algorithm(sendmat,8,this);
 			sendmat=player_AI.return_new_board();
 			board.set_matrix(sendmat);
+			if(player_AI.is_Game_Over()==true)
+				this.no_more_steps=true;
 			repaint();
 			System.out.println("AI played and Repainted");
 			if (this.gameData==null )
@@ -320,7 +322,7 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 	    	int col = (e.getX()-8) / tileSize; // 8 is left frame length
 	        int row = (e.getY()-30) / tileSize; // 30 is top frame length
 	      
-	        System.out.println("("+col+","+row+")");
+	        System.out.println("("+row+","+col+")");
 	        if(this.ai_playing==false && this.checkTouch(row, col))
 			if((this.inPlay==false && this.gameData.get_mat_i_j(row, col) !=EMPTY)
 				|| (this.inPlay == true && this.gameData.get_mat_i_j(row, col) !=EMPTY))
@@ -354,6 +356,12 @@ public class Checkers extends JPanel implements ActionListener,MouseListener {//
 	        
 	        if(this.ai_playing==true)
 	        {
+	        	try {
+	                Thread.sleep(200);
+	            } catch (InterruptedException e1) {
+	                // TODO Auto-generated catch block
+	                e1.printStackTrace();
+	            }
 	        	System.out.println("------------------------------------------Endedd------------------------------------------------------------");
 	        	repaint();
 	        	this.ai_move(this.gameData);

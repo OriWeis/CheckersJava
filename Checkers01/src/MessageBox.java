@@ -38,13 +38,13 @@ public class MessageBox implements ActionListener {
 			frame.setLayout(new FlowLayout());
 			
 			button = new JButton(" Play Again ");
-			button.setBorder(BorderFactory.createLineBorder(Color.yellow, 5));
+			//button.setBorder(BorderFactory.createLineBorder(Color.yellow, 5));
 
 			//button.setAlignmentX((float) 10.00);
 			//button.set("yellow");
 			
 			button2 = new JButton(" EXIT ");
-			button2.setBorder(BorderFactory.createLineBorder(Color.yellow, 5));
+			//button2.setBorder(BorderFactory.createLineBorder(Color.yellow, 5));
 
 			
 			button2.addActionListener(this);

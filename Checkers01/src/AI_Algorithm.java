@@ -21,14 +21,15 @@ public class AI_Algorithm
 	 */
 	public AI_Algorithm(matrix m,int depth,Checkers c)
 	{	
-		matrix mat12= new matrix();
-		ret_opt ret12=new ret_opt(mat12,0);
-		matrix m1=new matrix(m);
-		ret_opt ret1=AlphaBeta(m,depth,true,Double.MIN_VALUE,Double.MAX_VALUE,c,ret12);
+		//matrix mat12= new matrix();
+		//ret_opt ret12=new ret_opt(mat12,0);
+		//matrix m1=new matrix(m);
+		this.mat_to_ret=m;
+		ret_opt ret1=AlphaBeta(m,depth,true,Double.MIN_VALUE,Double.MAX_VALUE,c);
 		this.mat_to_ret=ret1.getNew_mat();
 		
 		System.out.println("Printing Final Matrix");
-		ret1.getNew_mat().print_mat();
+		//ret1.getNew_mat().print_mat();
 	}
 	
 	/**
@@ -37,17 +38,20 @@ public class AI_Algorithm
 	 * max_player is a boolean value that tells us if we want to minimize the value or maximize it
 	 * 
 	 **/
-	public ret_opt AlphaBeta(matrix m1, int depth,boolean max_player,double alpha,double beta,Checkers c1,ret_opt r1)
+	public ret_opt AlphaBeta(matrix m1, int depth,boolean max_player,double alpha,double beta,Checkers c1)
 	{
 		double maxEval,minEval,evaluation;
 		
-		if (depth ==0 ||m1.gameOver()==true)
+		ret_opt r1=new ret_opt(m1,m1.eval_Func());
+		
+		if (depth ==0 || m1.gameOver()==true)
 		{
+			System.out.println("\n");
+			//r1.getNew_mat().print_mat();
 			r1.set_Evaluation();
 			return r1;
 		}
 		
-		//System.out.println("Running Minimax Algo");
 		
 		if (max_player==true)
 		{
@@ -59,14 +63,14 @@ public class AI_Algorithm
 				//System.out.println("Entered To For loop of moves");
 				//mat.print_mat();
 				//System.out.println("\ndepth is ->"+depth+"\n");
-				evaluation=AlphaBeta(mat,depth -1,false,alpha,beta,c1,r1).getValue();
+				evaluation=AlphaBeta(mat,depth -1,false,alpha,beta,c1).getValue();
 				maxEval=Math.max(maxEval, evaluation);
 				if(evaluation==maxEval)
 					best_move.set_matrix(mat);
 				/**
 				 * for Prunning Alpha-Beta
 				 */
-				alpha=Math.max(alpha, maxEval);
+				alpha=Math.max(alpha, evaluation);
 				if (alpha >= beta)
 						break;
 				
@@ -86,14 +90,14 @@ public class AI_Algorithm
 			{
 				//mat.print_mat();
 				//System.out.println("\ndepth is ->"+depth);
-				evaluation=AlphaBeta(mat,depth -1,true,alpha,beta,c1,r1).getValue();
+				evaluation=AlphaBeta(mat,depth -1,true,alpha,beta,c1 ).getValue();
 				minEval=Math.min(minEval, evaluation);
 				if(minEval==evaluation)
 					best_move.set_matrix(mat);
 				/**
 				 * for Prunning Alpha-Beta
 				 */
-				beta=Math.min(beta, minEval);
+				beta=Math.min(beta, evaluation);
 				if (beta <= alpha)
 						break;
 			}
@@ -158,9 +162,17 @@ public class AI_Algorithm
 			}
 			
 		}
-		
-		return board_movings;
-		
+		return board_movings;	
+	}
+	
+	
+	public boolean is_Game_Over()
+	{
+		 ArrayList<matrix> redlen=this.get_all_moves(this.mat_to_ret, "red",null);
+		 ArrayList<matrix> whitelen=this.get_all_moves(this.mat_to_ret, "white",null);
+		 if(redlen.size()==0|| whitelen.size()==0)
+			 return true;
+		 return false;
 	}
 	
 }

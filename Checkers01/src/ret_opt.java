@@ -6,7 +6,8 @@ public class ret_opt {
 	
 	public ret_opt(matrix m1,double val)
 	{
-		this.new_mat=m1;
+		this.new_mat=new matrix();
+		this.new_mat.set_matrix(m1);
 		this.value=val;
 	}
 	

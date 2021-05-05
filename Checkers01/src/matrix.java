@@ -66,13 +66,7 @@ public class matrix
 	private int chosen_row,chosen_col;
 	
 	private boolean already_Ate;
-	private int counter_eat;
-/**
- * 
- * Function To Initialize matrix Object
- *  
- *  
- */	
+	private int counter_eat;	
 	
 	public int get_White_Left()
 	{
@@ -131,6 +125,9 @@ public class matrix
 		return this.moving_opt;
 	}
 	
+	/**
+	 * Function To Initialize matrix Object  
+	 */
 	public void init_mat()
 	{
 		for (int i=0; i<8;i++)
@@ -614,7 +611,7 @@ public class matrix
 						if(second_check(i+2,j-2,this.mat[i][j],"eat_left_down",i+2,j-2)==false)
 						{
 						System.out.println("Should eat...");
-						e1=new move_opt(i+2, j-2,"eat_left_down");
+							e1=new move_opt(i+2, j-2,"eat_left_down");
 						this.moving_opt.add(e1);
 						}
 						//eat_left_down(i,j);
@@ -846,8 +843,38 @@ public class matrix
 	 */
 	public double eval_Func()
 	{
-		this.update_Cells();//updates the number of regular Cells and kings. 
-		return this.red_left-this.white_left+(this.red_kings-this.white_kings);
+		int num_of_pieces=0;
+		short middle=0;
+		double evaluate=0;
+		//this.update_Cells();//updates the number of regular Cells and kings.
+		for (int i=0; i<this.DEFAULT_LEN;i++)
+		{
+			for (int j=0; j<this.DEFAULT_LEN;j++)
+			{
+				if(this.mat[i][j]!=0)
+				{
+					if(this.mat[i][j]==this.blck)
+						evaluate+=10;
+					if(this.mat[i][j]==this.whck)
+						evaluate-=10;
+					if(this.mat[i][j]==this.blc)
+						if(i>=4)
+							evaluate+=7;
+						else
+							evaluate+=5;
+					if(this.mat[i][j]==this.whc)
+						if(i<4)
+							evaluate-=7;
+						else
+							evaluate-=5;
+					num_of_pieces+=1;
+				}
+				
+				
+			}
+			
+		}
+		return evaluate/num_of_pieces;
 	}
 	
 	public void print_Movings(ArrayList<move_opt> moving)
@@ -921,12 +948,6 @@ public class matrix
 			System.out.println("Game over Bye Bye");
 			return true;
 		}
-		//if(this.num_of_white==4 && this.num_of_white==4)
-			//if(this.game_4_each_side==20)
-				//return true;
-			//else
-			//	this.game_4_each_side++;
-		
 		return false;
 	}
 	
